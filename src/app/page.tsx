@@ -1,169 +1,176 @@
 "use client";
 
-import { agents, tasks, activityLog, pipelineStages, upcomingEvents } from "@/data/mock";
+import { useState } from "react";
+import { agents, tasks, activityLog, projects } from "@/data/mock";
 
-const statusColor = {
+const statusColor: Record<string, string> = {
   aktiv: "bg-green-500",
   vilar: "bg-zinc-500",
   upptagen: "bg-yellow-500",
 };
 
-const taskStatusLabel = {
-  aktiv: { bg: "bg-indigo-500/20 text-indigo-400", label: "Aktiv" },
-  väntande: { bg: "bg-yellow-500/20 text-yellow-400", label: "Väntande" },
-  klar: { bg: "bg-green-500/20 text-green-400", label: "Klar" },
+const priorityConfig: Record<string, { dot: string; label: string }> = {
+  hög: { dot: "bg-red-500", label: "Hög" },
+  medium: { dot: "bg-yellow-500", label: "Medium" },
+  låg: { dot: "bg-zinc-500", label: "Låg" },
 };
 
-const priorityDot = {
-  hög: "bg-red-500",
-  medium: "bg-yellow-500",
-  låg: "bg-zinc-500",
-};
+const columns = [
+  { key: "att-göra" as const, label: "Att göra", icon: "📋", color: "border-zinc-600" },
+  { key: "pågår" as const, label: "Pågår", icon: "⚡", color: "border-blue-500" },
+  { key: "granskning" as const, label: "Granskning", icon: "🔍", color: "border-yellow-500" },
+  { key: "klart" as const, label: "Klart", icon: "✅", color: "border-green-500" },
+];
+
+function AgentBadge({ agentId }: { agentId: string }) {
+  const agent = agents.find((a) => a.id === agentId);
+  if (!agent) return null;
+  return (
+    <div className="flex items-center gap-1.5 bg-[#12121a] rounded-full pl-1 pr-2.5 py-0.5" title={`${agent.name} — ${agent.role}`}>
+      <span className="w-6 h-6 rounded-full bg-[#27273a] flex items-center justify-center text-sm">{agent.avatar}</span>
+      <span className="text-xs text-zinc-400">{agent.name}</span>
+    </div>
+  );
+}
+
+function TaskCard({ task }: { task: typeof tasks[0] }) {
+  const isOverdue = new Date(task.deadline) < new Date("2026-02-18") && task.status !== "klart";
+  return (
+    <div className="bg-[#1a1a2e] border border-[#27273a] rounded-lg p-3.5 hover:border-indigo-500/40 transition-colors group">
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <h4 className="text-sm font-medium leading-snug">{task.title}</h4>
+        <span className={`shrink-0 w-2 h-2 mt-1.5 rounded-full ${priorityConfig[task.priority].dot}`} title={priorityConfig[task.priority].label} />
+      </div>
+      <p className="text-xs text-zinc-500 mb-3 line-clamp-2">{task.description}</p>
+      <div className="flex items-center justify-between">
+        <div className="flex flex-wrap gap-1">
+          {task.agents.map((id) => (
+            <AgentBadge key={id} agentId={id} />
+          ))}
+        </div>
+        <span className={`text-[10px] whitespace-nowrap ${isOverdue ? "text-red-400" : "text-zinc-600"}`}>
+          {isOverdue ? "⚠ " : ""}{task.deadline.slice(5)}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
-  const activeTasks = tasks.filter((t) => t.status === "aktiv");
-  const pendingTasks = tasks.filter((t) => t.status === "väntande");
-  const doneTasks = tasks.filter((t) => t.status === "klar");
+  const [selectedProject, setSelectedProject] = useState("Alla projekt");
+
+  const filteredTasks = selectedProject === "Alla projekt"
+    ? tasks
+    : tasks.filter((t) => t.project === selectedProject);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      {/* Header */}
-      <header className="border-b border-[#27273a] px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🚀</span>
-            <h1 className="text-xl font-bold tracking-tight">Mission Control</h1>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-zinc-500">
-            <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span>System online</span>
-          </div>
+    <div className="min-h-screen bg-[#0a0a0f] flex">
+      {/* Sidebar */}
+      <aside className="w-72 border-r border-[#27273a] flex flex-col shrink-0 h-screen sticky top-0">
+        <div className="px-5 py-4 border-b border-[#27273a] flex items-center gap-3">
+          <span className="text-2xl">🚀</span>
+          <h1 className="text-lg font-bold tracking-tight">Mission Control</h1>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Agents */}
-        <section>
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Agenter</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="px-4 py-4 border-b border-[#27273a] flex-shrink-0">
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Agenter</h2>
+          <div className="space-y-1.5">
             {agents.map((a) => (
-              <div
-                key={a.name}
-                className="bg-[#1a1a2e] border border-[#27273a] rounded-xl p-4 hover:border-indigo-500/40 transition-colors"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl">{a.emoji}</span>
-                  <span className={`w-2.5 h-2.5 rounded-full ${statusColor[a.status]}`} />
+              <div key={a.id} className="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-[#1a1a2e] transition-colors">
+                <span className="w-8 h-8 rounded-full bg-[#27273a] flex items-center justify-center text-lg">{a.avatar}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">{a.name}</span>
+                    <span className="text-xs text-zinc-600">{a.emoji}</span>
+                  </div>
+                  <span className="text-[11px] text-zinc-500">{a.role}</span>
                 </div>
-                <h3 className="font-medium text-sm">{a.name}</h3>
-                <p className="text-xs text-zinc-500 mt-1">{a.description}</p>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${statusColor[a.status]}`} />
               </div>
             ))}
           </div>
-        </section>
-
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Tasks */}
-          <section className="lg:col-span-2 space-y-4">
-            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider">Uppgifter</h2>
-            <div className="space-y-3">
-              {[
-                { label: "Aktiva", items: activeTasks },
-                { label: "Väntande", items: pendingTasks },
-                { label: "Klara", items: doneTasks },
-              ].map((group) => (
-                <div key={group.label}>
-                  <h3 className="text-xs font-medium text-zinc-600 mb-2">
-                    {group.label} ({group.items.length})
-                  </h3>
-                  <div className="space-y-1.5">
-                    {group.items.map((t) => (
-                      <div
-                        key={t.id}
-                        className="bg-[#1a1a2e] border border-[#27273a] rounded-lg px-4 py-2.5 flex items-center justify-between hover:border-indigo-500/30 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className={`w-2 h-2 rounded-full ${priorityDot[t.priority]}`} />
-                          <span className={`text-sm ${t.status === "klar" ? "line-through text-zinc-600" : ""}`}>
-                            {t.title}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-zinc-600">{t.agent}</span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${taskStatusLabel[t.status].bg}`}>
-                            {taskStatusLabel[t.status].label}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Activity Log */}
-          <section>
-            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Aktivitetslogg</h2>
-            <div className="bg-[#1a1a2e] border border-[#27273a] rounded-xl p-4 space-y-3">
-              {activityLog.map((entry) => (
-                <div key={entry.id} className="flex gap-3 text-sm">
-                  <span className="text-zinc-600 text-xs whitespace-nowrap mt-0.5">
-                    {entry.timestamp.split(" ")[1]}
-                  </span>
-                  <div>
-                    <span className="text-indigo-400 text-xs">{entry.agent}</span>
-                    <p className="text-zinc-400 text-xs mt-0.5">{entry.event}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
         </div>
 
-        {/* Bottom row: Pipeline + Calendar */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Sales Pipeline */}
-          <section>
-            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">Säljpipeline</h2>
-            <div className="bg-[#1a1a2e] border border-[#27273a] rounded-xl p-5">
-              <div className="flex items-end justify-between gap-2 h-32">
-                {pipelineStages.map((stage) => (
-                  <div key={stage.name} className="flex-1 flex flex-col items-center gap-2">
-                    <span className="text-xs text-zinc-400">{stage.value} kr</span>
-                    <div
-                      className="w-full bg-indigo-500/30 rounded-t-md"
-                      style={{ height: `${(stage.count / 12) * 100}%`, minHeight: "16px" }}
-                    >
-                      <div className="w-full h-full bg-indigo-500/60 rounded-t-md flex items-center justify-center">
-                        <span className="text-xs font-bold">{stage.count}</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-zinc-600 text-center">{stage.name}</span>
+        {/* Activity Log */}
+        <div className="px-4 py-4 flex-1 overflow-y-auto">
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Aktivitetslogg</h2>
+          <div className="space-y-3">
+            {activityLog.map((entry) => {
+              const agent = agents.find((a) => a.id === entry.agentId);
+              return (
+                <div key={entry.id} className="flex gap-2.5 text-xs">
+                  <span className="w-5 h-5 rounded-full bg-[#27273a] flex items-center justify-center text-[10px] shrink-0 mt-0.5">
+                    {agent?.avatar || "?"}
+                  </span>
+                  <div>
+                    <span className="text-indigo-400">{agent?.name}</span>
+                    <span className="text-zinc-600 ml-1.5">{entry.timestamp.split(" ")[1]}</span>
+                    <p className="text-zinc-500 mt-0.5">{entry.event}</p>
                   </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Upcoming */}
-          <section>
-            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">
-              Kommande möten & deadlines
-            </h2>
-            <div className="bg-[#1a1a2e] border border-[#27273a] rounded-xl p-4 space-y-3">
-              {upcomingEvents.map((ev, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm">
-                  <div className="text-center min-w-[44px]">
-                    <div className="text-xs text-zinc-600">{ev.date.slice(5)}</div>
-                    <div className="text-indigo-400 font-medium">{ev.time}</div>
-                  </div>
-                  <div className="h-8 w-px bg-[#27273a]" />
-                  <span className="text-zinc-300">{ev.title}</span>
                 </div>
-              ))}
-            </div>
-          </section>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* System status */}
+        <div className="px-5 py-3 border-t border-[#27273a] flex items-center gap-2 text-xs text-zinc-500">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          System online
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col min-w-0">
+        {/* Project Filter Bar */}
+        <div className="border-b border-[#27273a] px-6 py-3 flex items-center gap-2">
+          {projects.map((p) => (
+            <button
+              key={p}
+              onClick={() => setSelectedProject(p)}
+              className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
+                selectedProject === p
+                  ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/40"
+                  : "text-zinc-500 hover:text-zinc-300 border border-transparent hover:border-[#27273a]"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+          <div className="ml-auto text-xs text-zinc-600">
+            {filteredTasks.length} uppgifter
+          </div>
+        </div>
+
+        {/* Kanban Board */}
+        <div className="flex-1 p-6 overflow-x-auto">
+          <div className="grid grid-cols-4 gap-5 min-w-[900px] h-full">
+            {columns.map((col) => {
+              const colTasks = filteredTasks.filter((t) => t.status === col.key);
+              return (
+                <div key={col.key} className="flex flex-col">
+                  <div className={`flex items-center gap-2 mb-4 pb-2 border-b-2 ${col.color}`}>
+                    <span>{col.icon}</span>
+                    <h3 className="text-sm font-semibold">{col.label}</h3>
+                    <span className="ml-auto text-xs text-zinc-600 bg-[#1a1a2e] px-2 py-0.5 rounded-full">
+                      {colTasks.length}
+                    </span>
+                  </div>
+                  <div className="space-y-3 flex-1">
+                    {colTasks.map((task) => (
+                      <TaskCard key={task.id} task={task} />
+                    ))}
+                    {colTasks.length === 0 && (
+                      <div className="text-xs text-zinc-700 text-center py-8 border border-dashed border-[#27273a] rounded-lg">
+                        Inga uppgifter
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </main>
     </div>
