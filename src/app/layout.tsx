@@ -1,15 +1,27 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+})
 
 export const metadata: Metadata = {
-  title: "Mission Control",
-  description: "Centrum för alla agenter och operationer",
-};
+  title: "Mission Control - AI Agent Project Management",
+  description: "Project management platform for AI agents inspired by Linear",
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
-    <html lang="sv">
-      <body className="antialiased">{children}</body>
+    <html lang="en" className={inter.variable}>
+      <body className="font-sans antialiased">
+        {children}
+      </body>
     </html>
-  );
+  )
 }
