@@ -49,40 +49,53 @@ export default function ProjectsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-[#a0a0a0]">Loading projects...</div>
       </div>
     )
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-[#e5e5e5] mb-2">Projects</h1>
-            <p className="text-sm text-[#a0a0a0]">Manage AI agent tasks and workflows</p>
-          </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all"
-          >
-            + New Project
-          </button>
-        </div>
-
-        {projects.length === 0 ? (
-          <div className="text-center py-16 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-            <p className="text-[#a0a0a0] mb-4">No projects yet</p>
+    <div className="w-full">
+      {/* Header */}
+      <div className="border-b border-[#2a2a2a] bg-[#0d0d0d] sticky top-0 z-10">
+        <div className="px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-[#e5e5e5]">Projects</h1>
+              <p className="text-sm text-[#a0a0a0] mt-1">
+                {projects.length} {projects.length === 1 ? 'project' : 'projects'}
+              </p>
+            </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all"
+              className="px-4 py-2 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all flex items-center gap-2"
             >
-              Create your first project
+              <span className="text-lg">+</span>
+              New Project
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-8">
+        {projects.length === 0 ? (
+          <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 200px)' }}>
+            <div className="text-center">
+              <div className="text-6xl mb-4">📋</div>
+              <h2 className="text-xl font-semibold text-[#e5e5e5] mb-2">No projects yet</h2>
+              <p className="text-[#a0a0a0] mb-6">Create your first project to get started</p>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-6 py-3 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all"
+              >
+                + Create Project
+              </button>
+            </div>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-[1400px]">
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -92,21 +105,22 @@ export default function ProjectsPage() {
 
       {/* Create Project Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-semibold text-[#e5e5e5] mb-4">Create New Project</h2>
-            <form onSubmit={handleCreateProject} className="space-y-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 w-full max-w-lg shadow-2xl">
+            <h2 className="text-xl font-semibold text-[#e5e5e5] mb-6">Create New Project</h2>
+            <form onSubmit={handleCreateProject} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-[#e5e5e5] mb-2">
-                  Project Name
+                  Project Name *
                 </label>
                 <input
                   type="text"
                   value={newProject.name}
                   onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2]"
+                  className="w-full px-4 py-2.5 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] placeholder-[#6a6a6a] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2] focus:border-transparent transition-all"
                   placeholder="My AI Project"
                   required
+                  autoFocus
                 />
               </div>
 
@@ -117,8 +131,9 @@ export default function ProjectsPage() {
                 <textarea
                   value={newProject.description}
                   onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                  className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2] min-h-[100px]"
+                  className="w-full px-4 py-2.5 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] placeholder-[#6a6a6a] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2] focus:border-transparent transition-all resize-none"
                   placeholder="What is this project about?"
+                  rows={4}
                 />
               </div>
 
@@ -126,15 +141,15 @@ export default function ProjectsPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 bg-[#2a2a2a] text-[#e5e5e5] rounded-lg font-medium hover:bg-[#3a3a3a] transition-all"
+                  className="flex-1 px-4 py-2.5 bg-[#2a2a2a] text-[#e5e5e5] rounded-lg font-medium hover:bg-[#3a3a3a] transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all"
+                  className="flex-1 px-4 py-2.5 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all"
                 >
-                  Create
+                  Create Project
                 </button>
               </div>
             </form>
