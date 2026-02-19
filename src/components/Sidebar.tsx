@@ -18,6 +18,7 @@ export default function Sidebar() {
   const links = [
     { href: '/', label: 'Projects', icon: '📋' },
     { href: '/agents', label: 'Agents', icon: '🤖' },
+    { href: '/analytics', label: 'Analytics', icon: '📊' },
   ]
 
   return (
