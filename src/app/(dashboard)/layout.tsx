@@ -28,19 +28,17 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0d0d0d]">
-        <div className="text-[#a0a0a0]">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0A0A0A' }}>
+        <div style={{ color: '#6B6B6B' }}>Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0d0d0d]">
+    <div className="flex min-h-screen" style={{ backgroundColor: '#0A0A0A' }}>
       <Sidebar />
-      <main className="flex-1 ml-60 overflow-y-auto">
-        <div className="min-h-screen">
-          {children}
-        </div>
+      <main className="flex-1 ml-[200px] min-h-screen">
+        {children}
       </main>
     </div>
   )

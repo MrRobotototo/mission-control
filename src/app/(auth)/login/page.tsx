@@ -32,17 +32,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0d0d0d]">
+    <div 
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundColor: '#0A0A0A' }}
+    >
       <div className="w-full max-w-md">
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-8">
+        <div 
+          className="rounded-2xl p-8"
+          style={{ backgroundColor: '#111111', border: '1px solid #222222' }}
+        >
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-[#e5e5e5] mb-2">Mission Control</h1>
-            <p className="text-sm text-[#a0a0a0]">AI Agent Project Management</p>
+            <div className="mb-4" style={{ fontSize: '48px' }}>🚀</div>
+            <h1 className="text-2xl font-semibold text-white mb-2">Mission Control</h1>
+            <p style={{ fontSize: '13px', color: '#A1A1A1' }}>
+              AI Agent Project Management
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#e5e5e5] mb-2">
+              <label 
+                htmlFor="email" 
+                className="block font-medium text-white mb-2"
+                style={{ fontSize: '13px' }}
+              >
                 Email
               </label>
               <input
@@ -50,14 +63,26 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2] transition-all"
+                className="w-full px-4 py-3 rounded-xl transition-all"
+                style={{
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid #222222',
+                  color: 'white',
+                  fontSize: '14px'
+                }}
                 placeholder="oscar@example.com"
                 required
+                onFocus={(e) => e.target.style.borderColor = '#6366F1'}
+                onBlur={(e) => e.target.style.borderColor = '#222222'}
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#e5e5e5] mb-2">
+              <label 
+                htmlFor="password" 
+                className="block font-medium text-white mb-2"
+                style={{ fontSize: '13px' }}
+              >
                 Password
               </label>
               <input
@@ -65,14 +90,29 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2] transition-all"
+                className="w-full px-4 py-3 rounded-xl transition-all"
+                style={{
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid #222222',
+                  color: 'white',
+                  fontSize: '14px'
+                }}
                 placeholder="••••••••"
                 required
+                onFocus={(e) => e.target.style.borderColor = '#6366F1'}
+                onBlur={(e) => e.target.style.borderColor = '#222222'}
               />
             </div>
 
             {error && (
-              <div className="p-3 bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-lg text-sm text-[#ef4444]">
+              <div 
+                className="p-3 rounded-xl text-sm"
+                style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  color: '#EF4444'
+                }}
+              >
                 {error}
               </div>
             )}
@@ -80,7 +120,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2] focus:ring-offset-2 focus:ring-offset-[#1a1a1a] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: '#6366F1',
+                color: 'white',
+                fontSize: '14px'
+              }}
+              onMouseOver={(e) => !loading && (e.currentTarget.style.backgroundColor = '#818CF8')}
+              onMouseOut={(e) => !loading && (e.currentTarget.style.backgroundColor = '#6366F1')}
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>

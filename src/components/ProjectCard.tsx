@@ -9,22 +9,22 @@ interface ProjectCardProps {
 export default function ProjectCard({ project }: ProjectCardProps) {
   const statusConfig = {
     active: {
-      className: 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20',
+      className: 'bg-[rgba(16,185,129,0.1)] text-[#10B981] border-[rgba(16,185,129,0.2)]',
       label: 'Active',
-      icon: '🟢'
+      icon: '●'
     },
     paused: {
-      className: 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/20',
+      className: 'bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-[rgba(245,158,11,0.2)]',
       label: 'Paused',
-      icon: '⏸️'
+      icon: '⏸'
     },
     completed: {
-      className: 'bg-[#5e6ad2]/10 text-[#5e6ad2] border-[#5e6ad2]/20',
+      className: 'bg-[rgba(99,102,241,0.1)] text-[#6366F1] border-[rgba(99,102,241,0.2)]',
       label: 'Completed',
-      icon: '✅'
+      icon: '✓'
     },
     archived: {
-      className: 'bg-[#a0a0a0]/10 text-[#a0a0a0] border-[#a0a0a0]/20',
+      className: 'bg-[rgba(107,107,107,0.1)] text-[#6B6B6B] border-[rgba(107,107,107,0.2)]',
       label: 'Archived',
       icon: '📦'
     },
@@ -34,34 +34,76 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <Link href={`/projects/${project.id}`}>
-      <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 hover:border-[#5e6ad2]/50 hover:shadow-lg hover:shadow-[#5e6ad2]/5 transition-all cursor-pointer group h-full flex flex-col">
+      <div 
+        className="h-full flex flex-col rounded-2xl p-6 cursor-pointer group transition-all duration-200"
+        style={{
+          backgroundColor: '#111111',
+          border: '1px solid #222222'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)'
+          e.currentTarget.style.borderColor = '#6366F1'
+          e.currentTarget.style.boxShadow = '0 10px 40px rgba(99, 102, 241, 0.15)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)'
+          e.currentTarget.style.borderColor = '#222222'
+          e.currentTarget.style.boxShadow = 'none'
+        }}
+      >
         <div className="flex items-start justify-between mb-4">
-          <h3 className="text-lg font-semibold text-[#e5e5e5] group-hover:text-[#5e6ad2] transition-colors flex-1 pr-3">
+          <h3 
+            className="font-semibold flex-1 pr-3 transition-colors duration-200 group-hover:text-[#6366F1]"
+            style={{ 
+              color: 'white',
+              fontSize: '18px',
+              lineHeight: '1.4'
+            }}
+          >
             {project.name}
           </h3>
           <span
-            className={`px-2.5 py-1 text-xs font-medium rounded-md border flex items-center gap-1.5 shrink-0 ${status.className}`}
+            className={`px-3 py-1.5 text-xs font-medium rounded-full border flex items-center gap-1.5 shrink-0 ${status.className}`}
           >
-            <span className="text-[10px]">{status.icon}</span>
+            <span style={{ fontSize: '8px' }}>{status.icon}</span>
             {status.label}
           </span>
         </div>
         
         {project.description ? (
-          <p className="text-sm text-[#a0a0a0] mb-4 line-clamp-3 flex-1">
+          <p 
+            className="mb-4 flex-1 line-clamp-3"
+            style={{ 
+              fontSize: '13px',
+              color: '#A1A1A1',
+              lineHeight: '1.6'
+            }}
+          >
             {project.description}
           </p>
         ) : (
-          <p className="text-sm text-[#6a6a6a] italic mb-4 flex-1">
+          <p 
+            className="mb-4 flex-1 italic"
+            style={{ 
+              fontSize: '13px',
+              color: '#6B6B6B'
+            }}
+          >
             No description
           </p>
         )}
         
-        <div className="flex items-center justify-between pt-4 border-t border-[#2a2a2a] mt-auto">
-          <div className="text-xs text-[#6a6a6a]">
+        <div 
+          className="flex items-center justify-between pt-4 mt-auto"
+          style={{ borderTop: '1px solid #222222' }}
+        >
+          <div style={{ fontSize: '12px', color: '#6B6B6B' }}>
             Created {formatDate(project.created_at)}
           </div>
-          <div className="text-xs text-[#5e6ad2] font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+          <div 
+            className="font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            style={{ fontSize: '12px', color: '#6366F1' }}
+          >
             View →
           </div>
         </div>

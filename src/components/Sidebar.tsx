@@ -39,32 +39,40 @@ export default function Sidebar() {
   ]
 
   const statusColors = {
-    online: 'bg-[#22c55e]',
-    offline: 'bg-[#a0a0a0]',
-    busy: 'bg-[#f59e0b]',
+    online: 'bg-[#10B981]',
+    offline: 'bg-[#6B6B6B]',
+    busy: 'bg-[#F59E0B]',
   }
 
   return (
-    <div className="w-60 h-screen bg-[#1a1a1a] border-r border-[#2a2a2a] fixed left-0 top-0 flex flex-col">
-      <div className="p-6">
-        <h1 className="text-xl font-semibold text-[#e5e5e5]">Mission Control</h1>
-        <p className="text-xs text-[#a0a0a0] mt-1">AI Project Management</p>
+    <aside 
+      className="w-[200px] h-screen bg-[#111111] border-r border-[#222222] fixed left-0 top-0 flex flex-col"
+      style={{ zIndex: 50 }}
+    >
+      {/* Header */}
+      <div className="px-5 py-6 border-b border-[#222222]">
+        <h1 className="text-lg font-semibold text-white tracking-tight">Mission Control</h1>
+        <p className="text-[11px] text-[#6B6B6B] mt-1">AI Project Management</p>
       </div>
 
-      <nav className="flex-1 px-3 overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto">
         {links.map((link) => {
           const isActive = pathname === link.href
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-all ${
-                isActive
-                  ? 'bg-[#2a2a2a] text-[#e5e5e5]'
-                  : 'text-[#a0a0a0] hover:bg-[#2a2a2a] hover:text-[#e5e5e5]'
-              }`}
+              className={`
+                group flex items-center gap-3 px-3 py-2 rounded-lg mb-1 
+                transition-all duration-200
+                ${isActive 
+                  ? 'bg-[#1A1A1A] text-white border-l-2 border-[#6366F1] pl-[10px]' 
+                  : 'text-[#A1A1A1] hover:bg-[#1A1A1A] hover:text-white border-l-2 border-transparent pl-[10px]'
+                }
+              `}
             >
-              <span className="text-lg">{link.icon}</span>
+              <span className="text-base">{link.icon}</span>
               <span className="text-sm font-medium">{link.label}</span>
             </Link>
           )
@@ -72,9 +80,9 @@ export default function Sidebar() {
 
         {/* Agents Section */}
         {agents.length > 0 && (
-          <div className="mt-6 pt-6 border-t border-[#2a2a2a]">
+          <div className="mt-6 pt-4 border-t border-[#222222]">
             <div className="px-3 mb-2">
-              <span className="text-xs font-semibold text-[#6a6a6a] uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-[#6B6B6B] uppercase tracking-wider">
                 Agents
               </span>
             </div>
@@ -84,16 +92,19 @@ export default function Sidebar() {
                 <Link
                   key={agent.id}
                   href={`/agents/${agent.id}`}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-all group ${
-                    isActive
-                      ? 'bg-[#2a2a2a] text-[#e5e5e5]'
-                      : 'text-[#a0a0a0] hover:bg-[#2a2a2a] hover:text-[#e5e5e5]'
-                  }`}
+                  className={`
+                    group flex items-center gap-3 px-3 py-2 rounded-lg mb-1 
+                    transition-all duration-200 relative
+                    ${isActive 
+                      ? 'bg-[#1A1A1A] text-white border-l-2 border-[#6366F1] pl-[10px]' 
+                      : 'text-[#A1A1A1] hover:bg-[#1A1A1A] hover:text-white border-l-2 border-transparent pl-[10px]'
+                    }
+                  `}
                 >
-                  <span className="text-lg">{agent.emoji}</span>
+                  <span className="text-base">{agent.emoji}</span>
                   <span className="text-sm font-medium flex-1">{agent.name}</span>
                   <div
-                    className={`w-2 h-2 rounded-full ${statusColors[agent.status]} ${
+                    className={`w-1.5 h-1.5 rounded-full ${statusColors[agent.status]} ${
                       isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                     } transition-opacity`}
                   />
@@ -104,15 +115,16 @@ export default function Sidebar() {
         )}
       </nav>
 
-      <div className="p-3 border-t border-[#2a2a2a]">
+      {/* Logout */}
+      <div className="p-3 border-t border-[#222222]">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#a0a0a0] hover:bg-[#2a2a2a] hover:text-[#e5e5e5] transition-all text-sm"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#A1A1A1] hover:bg-[#1A1A1A] hover:text-white transition-all text-sm"
         >
-          <span className="text-lg">🚪</span>
+          <span className="text-base">🚪</span>
           <span className="font-medium">Logout</span>
         </button>
       </div>
-    </div>
+    </aside>
   )
 }
