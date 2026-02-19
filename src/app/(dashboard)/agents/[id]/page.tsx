@@ -184,7 +184,7 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
             <div className="bg-[#1a1a1a] border border-[#5e6ad2]/50 rounded-xl p-6 hover:border-[#5e6ad2] transition-all cursor-pointer group max-w-4xl">
               <div className="flex items-start justify-between mb-2">
                 <h3 className="text-lg font-medium text-[#e5e5e5] group-hover:text-[#5e6ad2] transition-colors flex-1">
-                  {currentTask.name}
+                  {currentTask.title}
                 </h3>
                 <span className="text-xs text-[#5e6ad2] font-medium">View →</span>
               </div>
@@ -215,7 +215,7 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-4 hover:border-[#5e6ad2]/50 transition-all cursor-pointer group">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-sm font-medium text-[#e5e5e5] group-hover:text-[#5e6ad2] transition-colors flex-1">
-                      {task.name}
+                      {task.title}
                     </h3>
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded border ${
