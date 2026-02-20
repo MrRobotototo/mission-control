@@ -32,29 +32,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: '#0A0A0A' }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]">
       <div className="w-full max-w-md">
-        <div 
-          className="rounded-2xl p-8"
-          style={{ backgroundColor: '#111111', border: '1px solid #222222' }}
-        >
+        <div className="rounded-2xl p-8 bg-[#111111] border border-[#222222]">
           <div className="text-center mb-8">
-            <div className="mb-4" style={{ fontSize: '48px' }}>🚀</div>
+            <div className="emoji text-5xl mb-4">🚀</div>
             <h1 className="text-2xl font-semibold text-white mb-2">Mission Control</h1>
-            <p style={{ fontSize: '13px', color: '#A1A1A1' }}>
+            <p className="text-[13px] text-[#A1A1A1]">
               AI Agent Project Management
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label 
-                htmlFor="email" 
-                className="block font-medium text-white mb-2"
-                style={{ fontSize: '13px' }}
+              <label
+                htmlFor="email"
+                className="block text-[13px] font-medium text-white mb-2"
               >
                 Email
               </label>
@@ -63,25 +56,16 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl transition-all"
-                style={{
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #222222',
-                  color: 'white',
-                  fontSize: '14px'
-                }}
+                className="w-full px-4 py-3 rounded-xl bg-[#0A0A0A] border border-[#222222] text-white text-sm focus:border-[#6366F1] focus:outline-none transition-colors"
                 placeholder="oscar@example.com"
                 required
-                onFocus={(e) => e.target.style.borderColor = '#6366F1'}
-                onBlur={(e) => e.target.style.borderColor = '#222222'}
               />
             </div>
 
             <div>
-              <label 
-                htmlFor="password" 
-                className="block font-medium text-white mb-2"
-                style={{ fontSize: '13px' }}
+              <label
+                htmlFor="password"
+                className="block text-[13px] font-medium text-white mb-2"
               >
                 Password
               </label>
@@ -90,29 +74,14 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl transition-all"
-                style={{
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #222222',
-                  color: 'white',
-                  fontSize: '14px'
-                }}
+                className="w-full px-4 py-3 rounded-xl bg-[#0A0A0A] border border-[#222222] text-white text-sm focus:border-[#6366F1] focus:outline-none transition-colors"
                 placeholder="••••••••"
                 required
-                onFocus={(e) => e.target.style.borderColor = '#6366F1'}
-                onBlur={(e) => e.target.style.borderColor = '#222222'}
               />
             </div>
 
             {error && (
-              <div 
-                className="p-3 rounded-xl text-sm"
-                style={{
-                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.2)',
-                  color: '#EF4444'
-                }}
-              >
+              <div className="p-3 rounded-xl text-sm bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444]">
                 {error}
               </div>
             )}
@@ -120,14 +89,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                backgroundColor: '#6366F1',
-                color: 'white',
-                fontSize: '14px'
-              }}
-              onMouseOver={(e) => !loading && (e.currentTarget.style.backgroundColor = '#818CF8')}
-              onMouseOut={(e) => !loading && (e.currentTarget.style.backgroundColor = '#6366F1')}
+              className="w-full py-3 rounded-xl text-sm font-medium bg-[#6366F1] text-white hover:bg-[#818CF8] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>

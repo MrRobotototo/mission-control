@@ -57,111 +57,134 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen"><div className="text-[#a0a0a0]">Loading task...</div></div>
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0A0A]">
+        <div className="text-[#6B6B6B]">Loading task...</div>
+      </div>
+    )
   }
 
   if (!task) {
-    return <div className="flex items-center justify-center h-screen"><div className="text-[#ef4444]">Task not found</div></div>
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0A0A]">
+        <div className="text-center">
+          <div className="emoji text-6xl mb-4">📋</div>
+          <h2 className="text-xl font-semibold text-white mb-2">Task not found</h2>
+          <button
+            onClick={() => router.back()}
+            className="mt-4 px-4 py-2 bg-[#6366F1] text-white rounded-lg hover:bg-[#818CF8] transition-all"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    )
   }
 
   const statusColors: Record<string, string> = {
-    'todo': 'bg-[#a0a0a0]/10 text-[#a0a0a0] border-[#a0a0a0]/20',
-    'in-progress': 'bg-[#5e6ad2]/10 text-[#5e6ad2] border-[#5e6ad2]/20',
-    'blocked': 'bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/20',
-    'review': 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/20',
-    'done': 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20',
+    'todo': 'bg-[#A1A1A1]/10 text-[#A1A1A1] border-[#A1A1A1]/20',
+    'in-progress': 'bg-[#6366F1]/10 text-[#6366F1] border-[#6366F1]/20',
+    'blocked': 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/20',
+    'review': 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20',
+    'done': 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/20',
   }
 
   return (
-    <div className="p-8 h-screen flex flex-col">
-      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col min-h-0">
-        {/* Header */}
-        <div className="mb-6 flex-shrink-0">
+    <div className="w-full min-h-screen bg-[#0A0A0A]">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-40 border-b border-[#222222] bg-[#0A0A0A]/80 backdrop-blur-xl">
+        <div className="px-8 py-6 max-w-[1400px]">
           <button
             onClick={() => router.back()}
-            className="text-sm text-[#a0a0a0] hover:text-[#e5e5e5] mb-4 flex items-center gap-2"
+            className="text-sm text-[#A1A1A1] hover:text-white mb-4 flex items-center gap-2 transition-colors"
           >
             ← Back
           </button>
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h1 className="text-2xl font-semibold text-[#e5e5e5] mb-2">{task.title}</h1>
+              <h1 className="text-2xl font-semibold text-white mb-2">{task.title}</h1>
               <div className="flex items-center gap-3">
                 <span className={`px-2 py-1 text-xs font-medium rounded border ${statusColors[task.status]}`}>
                   {task.status.replace('-', ' ').toUpperCase()}
                 </span>
-                <span className="text-xs text-[#a0a0a0]">Agent: {task.agent_id}</span>
-                <span className="text-xs text-[#a0a0a0]">Created: {formatDateTime(task.created_at)}</span>
+                <span className="text-xs text-[#A1A1A1]">Agent: {task.agent_id}</span>
+                <span className="text-xs text-[#A1A1A1]">Created: {formatDateTime(task.created_at)}</span>
               </div>
             </div>
             <button
               onClick={() => setShowChat(!showChat)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                showChat ? 'bg-[#5e6ad2] text-white' : 'bg-[#2a2a2a] text-[#a0a0a0] hover:bg-[#3a3a3a]'
+                showChat
+                  ? 'bg-[#6366F1] text-white'
+                  : 'bg-[#1A1A1A] text-[#A1A1A1] hover:bg-[#222222] hover:text-white'
               }`}
             >
               💬 Chat
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Main content */}
-        <div className="flex gap-6 flex-1 min-h-0">
+      {/* Main content */}
+      <div className="p-8">
+        <div className="flex gap-6 max-w-[1400px] min-h-[calc(100vh-200px)]">
           {/* Left: Task details */}
           <div className="flex-1 space-y-4 overflow-y-auto">
             {/* Description */}
             {task.description && (
-              <div className="p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-                <h3 className="text-sm font-semibold text-[#e5e5e5] mb-2">Description</h3>
-                <p className="text-sm text-[#a0a0a0] whitespace-pre-wrap">{task.description}</p>
+              <div className="p-6 bg-[#111111] border border-[#222222] rounded-2xl">
+                <h3 className="text-sm font-semibold text-white mb-2">Description</h3>
+                <p className="text-sm text-[#A1A1A1] whitespace-pre-wrap">{task.description}</p>
               </div>
             )}
 
             {/* Blocker info */}
             {task.status === 'blocked' && task.blocked_by && (
               <div
-                className="p-4 bg-[#ef4444]/5 border border-[#ef4444]/20 rounded-lg cursor-pointer hover:bg-[#ef4444]/10 transition-all"
+                className="p-6 bg-[#EF4444]/5 border border-[#EF4444]/20 rounded-2xl cursor-pointer hover:bg-[#EF4444]/10 transition-all"
                 onClick={() => setShowBlockerModal(true)}
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-[#ef4444]">🚫 Blocked</span>
+                  <span className="text-sm font-semibold text-[#EF4444]">🚫 Blocked</span>
                   {task.blocker_reason && (
-                    <span className="text-xs text-[#ef4444]/70">— {task.blocker_reason}</span>
+                    <span className="text-xs text-[#EF4444]/70">— {task.blocker_reason}</span>
                   )}
-                  <span className="text-xs text-[#ef4444]/50 ml-auto">Click for details</span>
+                  <span className="text-xs text-[#EF4444]/50 ml-auto">Click for details</span>
                 </div>
               </div>
             )}
 
             {/* Token Usage */}
             {tokens && tokens.total_tokens > 0 && (
-              <div className="p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-                <h3 className="text-sm font-semibold text-[#e5e5e5] mb-3">📊 Token Usage</h3>
-                <div className="grid grid-cols-3 gap-3 mb-3">
-                  <div className="p-2 bg-[#0d0d0d] rounded">
-                    <span className="text-xs text-[#a0a0a0] block">Total Tokens</span>
-                    <span className="text-sm font-semibold text-[#e5e5e5]">{tokens.total_tokens.toLocaleString()}</span>
+              <div className="p-6 bg-[#111111] border border-[#222222] rounded-2xl">
+                <h3 className="text-sm font-semibold text-white mb-4">
+                  <span className="emoji mr-1">📊</span> Token Usage
+                </h3>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="p-3 bg-[#0A0A0A] rounded-xl">
+                    <span className="text-xs text-[#A1A1A1] block mb-1">Total Tokens</span>
+                    <span className="text-sm font-semibold text-white">{tokens.total_tokens.toLocaleString()}</span>
                   </div>
-                  <div className="p-2 bg-[#0d0d0d] rounded">
-                    <span className="text-xs text-[#a0a0a0] block">Input / Output</span>
-                    <span className="text-sm font-semibold text-[#e5e5e5]">{tokens.total_input.toLocaleString()} / {tokens.total_output.toLocaleString()}</span>
+                  <div className="p-3 bg-[#0A0A0A] rounded-xl">
+                    <span className="text-xs text-[#A1A1A1] block mb-1">Input / Output</span>
+                    <span className="text-sm font-semibold text-white">{tokens.total_input.toLocaleString()} / {tokens.total_output.toLocaleString()}</span>
                   </div>
-                  <div className="p-2 bg-[#0d0d0d] rounded">
-                    <span className="text-xs text-[#a0a0a0] block">Cost</span>
-                    <span className="text-sm font-semibold text-[#22c55e]">${tokens.total_cost.toFixed(4)}</span>
+                  <div className="p-3 bg-[#0A0A0A] rounded-xl">
+                    <span className="text-xs text-[#A1A1A1] block mb-1">Cost</span>
+                    <span className="text-sm font-semibold text-[#10B981]">${tokens.total_cost.toFixed(4)}</span>
                   </div>
                 </div>
 
                 {/* History */}
                 {tokens.history.length > 0 && (
                   <div className="space-y-1">
-                    <span className="text-xs text-[#a0a0a0]">History</span>
+                    <span className="text-xs text-[#6B6B6B]">History</span>
                     {tokens.history.slice(0, 5).map((h) => (
-                      <div key={h.id} className="flex items-center justify-between text-xs py-1 border-t border-[#2a2a2a]">
-                        <span className="text-[#a0a0a0]">{h.model}</span>
-                        <span className="text-[#e5e5e5]">{(h.input_tokens + h.output_tokens).toLocaleString()} tokens</span>
-                        <span className="text-[#22c55e]">${h.cost_usd.toFixed(4)}</span>
-                        <span className="text-[#666]">{formatDateTime(h.timestamp)}</span>
+                      <div key={h.id} className="flex items-center justify-between text-xs py-2 border-t border-[#222222]">
+                        <span className="text-[#A1A1A1]">{h.model}</span>
+                        <span className="text-white">{(h.input_tokens + h.output_tokens).toLocaleString()} tokens</span>
+                        <span className="text-[#10B981]">${h.cost_usd.toFixed(4)}</span>
+                        <span className="text-[#6B6B6B]">{formatDateTime(h.timestamp)}</span>
                       </div>
                     ))}
                   </div>

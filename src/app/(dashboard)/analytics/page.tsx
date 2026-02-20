@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
@@ -37,7 +36,6 @@ interface TopTask {
 }
 
 export default function AnalyticsPage() {
-  const router = useRouter()
   const [overview, setOverview] = useState<Overview | null>(null)
   const [byDay, setByDay] = useState<Array<{ date: string; input_tokens: number; output_tokens: number; cost: number }>>([])
   const [byAgent, setByAgent] = useState<Array<{ agent_id: string; total_tokens: number; total_cost: number }>>([])
@@ -66,27 +64,22 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div style={{ color: '#6B6B6B' }}>Loading analytics...</div>
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0A0A]">
+        <div className="text-[#6B6B6B]">Loading analytics...</div>
       </div>
     )
   }
 
   return (
-    <div className="w-full min-h-screen" style={{ backgroundColor: '#0A0A0A' }}>
+    <div className="w-full min-h-screen bg-[#0A0A0A]">
       {/* Sticky Header */}
-      <div 
-        className="sticky top-0 z-40 border-b"
-        style={{ 
-          backgroundColor: 'rgba(10, 10, 10, 0.8)',
-          backdropFilter: 'blur(12px)',
-          borderColor: '#222222'
-        }}
-      >
+      <div className="sticky top-0 z-40 border-b border-[#222222] bg-[#0A0A0A]/80 backdrop-blur-xl">
         <div className="px-8 py-6">
           <div className="max-w-[1400px]">
-            <h1 className="text-2xl font-semibold text-white mb-1">📊 Analytics</h1>
-            <p style={{ fontSize: '13px', color: '#A1A1A1' }}>
+            <h1 className="text-2xl font-semibold text-white mb-1">
+              <span className="emoji mr-2">📊</span>Analytics
+            </h1>
+            <p className="text-[13px] text-[#A1A1A1]">
               Token usage and cost tracking across all projects
             </p>
           </div>
@@ -103,48 +96,41 @@ export default function AnalyticsPage() {
                 label: 'Total Tokens', 
                 value: (overview?.total_tokens || 0).toLocaleString(), 
                 sub: `${overview?.record_count || 0} records`,
-                color: '#6366F1'
+                accent: 'border-l-[#6366F1]'
               },
               { 
                 label: 'Total Cost', 
                 value: `$${(overview?.total_cost || 0).toFixed(2)}`, 
                 sub: 'All time',
-                color: '#10B981'
+                accent: 'border-l-[#10B981]'
               },
               { 
                 label: 'This Month', 
                 value: (overview?.this_month_tokens || 0).toLocaleString(), 
                 sub: `$${(overview?.this_month_cost || 0).toFixed(2)}`,
-                color: '#F59E0B'
+                accent: 'border-l-[#F59E0B]'
               },
               { 
                 label: 'Avg per Task', 
                 value: (overview?.avg_tokens_per_task || 0).toLocaleString(), 
                 sub: 'tokens',
-                color: '#3B82F6'
+                accent: 'border-l-[#3B82F6]'
               },
             ].map((card) => (
-              <div 
-                key={card.label} 
-                className="p-6 rounded-2xl"
-                style={{ backgroundColor: '#111111', border: '1px solid #222222' }}
+              <div
+                key={card.label}
+                className={`p-6 rounded-2xl bg-[#111111] border border-[#222222] border-l-2 ${card.accent}`}
               >
-                <div style={{ fontSize: '12px', color: '#6B6B6B', marginBottom: '12px', fontWeight: 500 }}>
-                  {card.label}
-                </div>
-                <div className="text-3xl font-semibold text-white mb-2">
-                  {card.value}
-                </div>
-                <div style={{ fontSize: '12px', color: '#A1A1A1' }}>
-                  {card.sub}
-                </div>
+                <div className="text-xs text-[#6B6B6B] mb-3 font-medium">{card.label}</div>
+                <div className="text-3xl font-semibold text-white mb-2">{card.value}</div>
+                <div className="text-xs text-[#A1A1A1]">{card.sub}</div>
               </div>
             ))}
           </div>
 
           {/* Charts */}
           {byDay.length > 0 && (
-            <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+            <div className="rounded-2xl p-6 bg-[#111111] border border-[#222222]">
               <h3 className="text-lg font-semibold text-white mb-6">Tokens Over Time</h3>
               <TokensOverTimeChart data={byDay} />
             </div>
@@ -152,14 +138,14 @@ export default function AnalyticsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {byAgent.length > 0 && (
-              <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+              <div className="rounded-2xl p-6 bg-[#111111] border border-[#222222]">
                 <h3 className="text-lg font-semibold text-white mb-6">Cost by Agent</h3>
                 <CostByAgentChart data={byAgent} />
               </div>
             )}
 
             {byModel.length > 0 && (
-              <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+              <div className="rounded-2xl p-6 bg-[#111111] border border-[#222222]">
                 <h3 className="text-lg font-semibold text-white mb-6">Cost by LLM Model</h3>
                 <CostByModelChart data={byModel} />
               </div>
@@ -168,31 +154,20 @@ export default function AnalyticsPage() {
 
           {/* Top Projects */}
           {topProjects.length > 0 && (
-            <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+            <div className="rounded-2xl p-6 bg-[#111111] border border-[#222222]">
               <h3 className="text-lg font-semibold text-white mb-6">Top Projects by Cost</h3>
               <div className="space-y-3">
                 {topProjects.slice(0, 5).map((proj) => (
                   <Link key={proj.project_id} href={`/projects/${proj.project_id}`}>
-                    <div 
-                      className="flex items-center justify-between p-4 rounded-xl transition-all cursor-pointer"
-                      style={{ backgroundColor: '#0A0A0A', border: '1px solid transparent' }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = '#6366F1'
-                        e.currentTarget.style.backgroundColor = '#111111'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = 'transparent'
-                        e.currentTarget.style.backgroundColor = '#0A0A0A'
-                      }}
-                    >
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-[#0A0A0A] border border-transparent hover:border-[#6366F1] hover:bg-[#111111] transition-all cursor-pointer">
                       <div className="flex-1">
                         <div className="font-medium text-white mb-1">{proj.name}</div>
-                        <div style={{ fontSize: '12px', color: '#6B6B6B' }}>
+                        <div className="text-xs text-[#6B6B6B]">
                           {proj.total_tokens.toLocaleString()} tokens • {proj.tasks_count} tasks
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold" style={{ color: '#10B981' }}>
+                        <div className="font-semibold text-[#10B981]">
                           ${proj.total_cost.toFixed(2)}
                         </div>
                       </div>
@@ -205,26 +180,15 @@ export default function AnalyticsPage() {
 
           {/* Top Tasks */}
           {topTasks.length > 0 && (
-            <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+            <div className="rounded-2xl p-6 bg-[#111111] border border-[#222222]">
               <h3 className="text-lg font-semibold text-white mb-6">Top Tasks by Token Usage</h3>
               <div className="space-y-3">
                 {topTasks.slice(0, 5).map((task) => (
                   <Link key={task.task_id} href={`/tasks/${task.task_id}`}>
-                    <div 
-                      className="flex items-center justify-between p-4 rounded-xl transition-all cursor-pointer"
-                      style={{ backgroundColor: '#0A0A0A', border: '1px solid transparent' }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = '#6366F1'
-                        e.currentTarget.style.backgroundColor = '#111111'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = 'transparent'
-                        e.currentTarget.style.backgroundColor = '#0A0A0A'
-                      }}
-                    >
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-[#0A0A0A] border border-transparent hover:border-[#6366F1] hover:bg-[#111111] transition-all cursor-pointer">
                       <div className="flex-1">
                         <div className="font-medium text-white mb-1">{task.title}</div>
-                        <div style={{ fontSize: '12px', color: '#6B6B6B' }}>
+                        <div className="text-xs text-[#6B6B6B]">
                           {task.project_name} • {task.agent_id}
                         </div>
                       </div>
@@ -232,7 +196,7 @@ export default function AnalyticsPage() {
                         <div className="font-semibold text-white">
                           {task.total_tokens.toLocaleString()}
                         </div>
-                        <div style={{ fontSize: '12px', color: '#10B981' }}>
+                        <div className="text-xs text-[#10B981]">
                           ${task.total_cost.toFixed(2)}
                         </div>
                       </div>
@@ -246,9 +210,9 @@ export default function AnalyticsPage() {
           {/* Empty State */}
           {byDay.length === 0 && topProjects.length === 0 && topTasks.length === 0 && (
             <div className="text-center py-16">
-              <div style={{ fontSize: '64px', marginBottom: '16px' }}>📊</div>
+              <div className="emoji text-6xl mb-4">📊</div>
               <h2 className="text-xl font-semibold text-white mb-2">No data yet</h2>
-              <p style={{ color: '#A1A1A1' }}>
+              <p className="text-[#A1A1A1]">
                 Token usage will appear here once tasks start running
               </p>
             </div>

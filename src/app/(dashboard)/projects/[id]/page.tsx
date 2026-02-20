@@ -113,11 +113,28 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen"><div className="text-[#a0a0a0]">Loading project...</div></div>
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0A0A]">
+        <div className="text-[#6B6B6B]">Loading project...</div>
+      </div>
+    )
   }
 
   if (!project) {
-    return <div className="flex items-center justify-center h-screen"><div className="text-[#ef4444]">Project not found</div></div>
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0A0A0A]">
+        <div className="text-center">
+          <div className="emoji text-6xl mb-4">📋</div>
+          <h2 className="text-xl font-semibold text-white mb-2">Project not found</h2>
+          <button
+            onClick={() => router.push('/')}
+            className="mt-4 px-4 py-2 bg-[#6366F1] text-white rounded-lg hover:bg-[#818CF8] transition-all"
+          >
+            Back to Projects
+          </button>
+        </div>
+      </div>
+    )
   }
 
   const tasksByStatus = {
@@ -129,100 +146,157 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <button onClick={() => router.push('/')} className="text-sm text-[#a0a0a0] hover:text-[#e5e5e5] mb-4 flex items-center gap-2">
+    <div className="w-full min-h-screen bg-[#0A0A0A]">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-40 border-b border-[#222222] bg-[#0A0A0A]/80 backdrop-blur-xl">
+        <div className="px-8 py-6 max-w-[1400px]">
+          <button
+            onClick={() => router.push('/')}
+            className="text-sm text-[#A1A1A1] hover:text-white mb-4 flex items-center gap-2 transition-colors"
+          >
             ← Back to Projects
           </button>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-semibold text-[#e5e5e5] mb-2">{project.name}</h1>
-              {project.description && <p className="text-sm text-[#a0a0a0]">{project.description}</p>}
+              <h1 className="text-3xl font-semibold text-white mb-2">{project.name}</h1>
+              {project.description && (
+                <p className="text-sm text-[#A1A1A1]">{project.description}</p>
+              )}
             </div>
-            <button onClick={() => setShowCreateModal(true)} className="px-4 py-2 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all">
-              + New Task
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="px-5 py-2.5 bg-[#6366F1] text-white rounded-full text-sm font-medium hover:bg-[#818CF8] hover:scale-105 transition-all flex items-center gap-2"
+            >
+              <span className="text-lg">+</span>
+              New Task
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Token Usage Card */}
-        {tokens && tokens.total_tokens > 0 && (
-          <div className="mb-6 p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-            <h3 className="text-sm font-semibold text-[#e5e5e5] mb-3">📊 Token Usage for this Project</h3>
-            <div className="flex items-center gap-6">
-              <div>
-                <span className="text-xs text-[#a0a0a0] block">Total Tokens</span>
-                <span className="text-lg font-semibold text-[#e5e5e5]">{tokens.total_tokens.toLocaleString()}</span>
-              </div>
-              <div>
-                <span className="text-xs text-[#a0a0a0] block">Cost</span>
-                <span className="text-lg font-semibold text-[#22c55e]">${tokens.total_cost.toFixed(2)}</span>
-              </div>
-              {Object.entries(tokens.by_model || {}).map(([model, cost]) => (
-                <div key={model}>
-                  <span className="text-xs text-[#a0a0a0] block">{model}</span>
-                  <span className="text-sm text-[#e5e5e5]">${(cost as number).toFixed(2)}</span>
+      {/* Content */}
+      <div className="p-8">
+        <div className="max-w-[1400px] space-y-6">
+          {/* Token Usage Card */}
+          {tokens && tokens.total_tokens > 0 && (
+            <div className="p-6 bg-[#111111] border border-[#222222] rounded-2xl">
+              <h3 className="text-sm font-semibold text-white mb-4">
+                <span className="emoji mr-1">📊</span> Token Usage for this Project
+              </h3>
+              <div className="flex items-center gap-6 flex-wrap">
+                <div>
+                  <span className="text-xs text-[#A1A1A1] block mb-1">Total Tokens</span>
+                  <span className="text-lg font-semibold text-white">{tokens.total_tokens.toLocaleString()}</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Agent Filter */}
-        <div className="mb-6 flex items-center gap-3">
-          <span className="text-sm text-[#a0a0a0]">Filter by agent:</span>
-          <div className="flex gap-2">
-            <button onClick={() => setFilterAgent('all')} className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${filterAgent === 'all' ? 'bg-[#5e6ad2] text-white' : 'bg-[#2a2a2a] text-[#a0a0a0] hover:bg-[#3a3a3a]'}`}>
-              All
-            </button>
-            {agents.map((agent) => (
-              <button key={agent.id} onClick={() => setFilterAgent(agent.id)} className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${filterAgent === agent.id ? 'bg-[#5e6ad2] text-white' : 'bg-[#2a2a2a] text-[#a0a0a0] hover:bg-[#3a3a3a]'}`}>
-                {agent.emoji} {agent.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Kanban Board */}
-        <div className="grid grid-cols-5 gap-4">
-          {Object.entries(tasksByStatus).map(([status, statusTasks]) => (
-            <div key={status} className="flex flex-col">
-              <div className="mb-4">
-                <h3 className="text-sm font-semibold text-[#e5e5e5] mb-1 capitalize">{status.replace('-', ' ')}</h3>
-                <span className="text-xs text-[#a0a0a0]">{statusTasks.length} tasks</span>
-              </div>
-              <div className="space-y-3 flex-1">
-                {statusTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} onStatusChange={handleStatusChange} />
+                <div>
+                  <span className="text-xs text-[#A1A1A1] block mb-1">Cost</span>
+                  <span className="text-lg font-semibold text-[#10B981]">${tokens.total_cost.toFixed(2)}</span>
+                </div>
+                {Object.entries(tokens.by_model || {}).map(([model, cost]) => (
+                  <div key={model}>
+                    <span className="text-xs text-[#A1A1A1] block mb-1">{model}</span>
+                    <span className="text-sm text-white">${(cost as number).toFixed(2)}</span>
+                  </div>
                 ))}
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Agent Filter */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-[#A1A1A1]">Filter by agent:</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setFilterAgent('all')}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  filterAgent === 'all'
+                    ? 'bg-[#6366F1] text-white'
+                    : 'bg-[#1A1A1A] text-[#A1A1A1] hover:bg-[#222222] hover:text-white'
+                }`}
+              >
+                All
+              </button>
+              {agents.map((agent) => (
+                <button
+                  key={agent.id}
+                  onClick={() => setFilterAgent(agent.id)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    filterAgent === agent.id
+                      ? 'bg-[#6366F1] text-white'
+                      : 'bg-[#1A1A1A] text-[#A1A1A1] hover:bg-[#222222] hover:text-white'
+                  }`}
+                >
+                  <span className="emoji mr-1">{agent.emoji || '🤖'}</span>
+                  {agent.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Kanban Board */}
+          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4">
+            {Object.entries(tasksByStatus).map(([status, statusTasks]) => (
+              <div key={status} className="flex flex-col">
+                <div className="mb-4">
+                  <h3 className="text-sm font-semibold text-white mb-1 capitalize">
+                    {status.replace('-', ' ')}
+                  </h3>
+                  <span className="text-xs text-[#6B6B6B]">{statusTasks.length} tasks</span>
+                </div>
+                <div className="space-y-3 flex-1">
+                  {statusTasks.map((task) => (
+                    <TaskCard key={task.id} task={task} onStatusChange={handleStatusChange} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Create Task Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-semibold text-[#e5e5e5] mb-4">Create New Task</h2>
-            <form onSubmit={handleCreateTask} className="space-y-4">
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            className="bg-[#111111] border border-[#222222] rounded-2xl p-8 w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold text-white mb-6">Create New Task</h2>
+            <form onSubmit={handleCreateTask} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-[#e5e5e5] mb-2">Task Title</label>
-                <input type="text" value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2]" placeholder="What needs to be done?" required />
+                <label className="block text-[13px] font-medium text-white mb-2">Task Title</label>
+                <input
+                  type="text"
+                  value={newTask.title}
+                  onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#6366F1] transition-colors"
+                  placeholder="What needs to be done?"
+                  required
+                  autoFocus
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#e5e5e5] mb-2">Description</label>
-                <textarea value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2] min-h-[80px]" placeholder="Additional details..." />
+                <label className="block text-[13px] font-medium text-white mb-2">Description</label>
+                <textarea
+                  value={newTask.description}
+                  onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#6366F1] transition-colors min-h-[80px] resize-none"
+                  placeholder="Additional details..."
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#e5e5e5] mb-2">Priority</label>
-                  <select value={newTask.priority} onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2]">
+                  <label className="block text-[13px] font-medium text-white mb-2">Priority</label>
+                  <select
+                    value={newTask.priority}
+                    onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+                    className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#6366F1] transition-colors"
+                  >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
@@ -230,8 +304,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#e5e5e5] mb-2">Agent</label>
-                  <select value={newTask.agent_id} onChange={(e) => setNewTask({ ...newTask, agent_id: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2]">
+                  <label className="block text-[13px] font-medium text-white mb-2">Agent</label>
+                  <select
+                    value={newTask.agent_id}
+                    onChange={(e) => setNewTask({ ...newTask, agent_id: e.target.value })}
+                    className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#6366F1] transition-colors"
+                  >
                     {agents.map((agent) => (
                       <option key={agent.id} value={agent.id}>{agent.emoji} {agent.name}</option>
                     ))}
@@ -241,8 +319,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#e5e5e5] mb-2">Status</label>
-                  <select value={newTask.status} onChange={(e) => setNewTask({ ...newTask, status: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2]">
+                  <label className="block text-[13px] font-medium text-white mb-2">Status</label>
+                  <select
+                    value={newTask.status}
+                    onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
+                    className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#6366F1] transition-colors"
+                  >
                     <option value="todo">To Do</option>
                     <option value="in-progress">In Progress</option>
                     <option value="blocked">Blocked</option>
@@ -251,17 +333,27 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#e5e5e5] mb-2">Assign To</label>
-                  <input type="text" value={newTask.assigned_to} onChange={(e) => setNewTask({ ...newTask, assigned_to: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#5e6ad2]" placeholder="oscar, etc." />
+                  <label className="block text-[13px] font-medium text-white mb-2">Assign To</label>
+                  <input
+                    type="text"
+                    value={newTask.assigned_to}
+                    onChange={(e) => setNewTask({ ...newTask, assigned_to: e.target.value })}
+                    className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#6366F1] transition-colors"
+                    placeholder="oscar, etc."
+                  />
                 </div>
               </div>
 
-              {/* Blocker fields - only shown when status is blocked */}
+              {/* Blocker fields */}
               {newTask.status === 'blocked' && (
-                <div className="space-y-4 p-3 bg-[#ef4444]/5 border border-[#ef4444]/20 rounded-lg">
+                <div className="space-y-4 p-4 bg-[#EF4444]/5 border border-[#EF4444]/20 rounded-xl">
                   <div>
-                    <label className="block text-sm font-medium text-[#ef4444] mb-2">Blocked By</label>
-                    <select value={newTask.blocked_by} onChange={(e) => setNewTask({ ...newTask, blocked_by: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#ef4444]">
+                    <label className="block text-[13px] font-medium text-[#EF4444] mb-2">Blocked By</label>
+                    <select
+                      value={newTask.blocked_by}
+                      onChange={(e) => setNewTask({ ...newTask, blocked_by: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#EF4444] transition-colors"
+                    >
                       <option value="">Select a task...</option>
                       {tasks.map((t) => (
                         <option key={t.id} value={t.id}>{t.title}</option>
@@ -269,15 +361,32 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#ef4444] mb-2">Blocker Reason</label>
-                    <input type="text" value={newTask.blocker_reason} onChange={(e) => setNewTask({ ...newTask, blocker_reason: e.target.value })} className="w-full px-4 py-2 bg-[#0d0d0d] border border-[#2a2a2a] rounded-lg text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-[#ef4444]" placeholder="Why is this blocked?" />
+                    <label className="block text-[13px] font-medium text-[#EF4444] mb-2">Blocker Reason</label>
+                    <input
+                      type="text"
+                      value={newTask.blocker_reason}
+                      onChange={(e) => setNewTask({ ...newTask, blocker_reason: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#222222] rounded-xl text-white text-sm focus:outline-none focus:border-[#EF4444] transition-colors"
+                      placeholder="Why is this blocked?"
+                    />
                   </div>
                 </div>
               )}
 
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 px-4 py-2 bg-[#2a2a2a] text-[#e5e5e5] rounded-lg font-medium hover:bg-[#3a3a3a] transition-all">Cancel</button>
-                <button type="submit" className="flex-1 px-4 py-2 bg-[#5e6ad2] text-white rounded-lg font-medium hover:bg-[#4f5bc4] transition-all">Create</button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-4 py-3 bg-[#1A1A1A] text-white rounded-xl text-sm font-medium hover:bg-[#222222] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-[#6366F1] text-white rounded-xl text-sm font-medium hover:bg-[#818CF8] transition-colors"
+                >
+                  Create
+                </button>
               </div>
             </form>
           </div>

@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
-const COLORS = ['#5e6ad2', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6']
+const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
 
 interface Props {
   data: Array<{ agent_id: string; total_cost: number }>
@@ -14,12 +14,30 @@ export default function CostByAgentChart({ data }: Props) {
   return (
     <ResponsiveContainer width="100%" height={250}>
       <PieChart>
-        <Pie data={chartData} cx="50%" cy="50%" innerRadius={60} outerRadius={90} dataKey="value" label={({ name, value }) => `${name}: $${value}`} labelLine={{ stroke: '#666' }}>
+        <Pie
+          data={chartData}
+          cx="50%"
+          cy="50%"
+          innerRadius={60}
+          outerRadius={90}
+          dataKey="value"
+          label={({ name, value }) => `${name}: $${value}`}
+          labelLine={{ stroke: '#6B6B6B' }}
+        >
           {chartData.map((_, i) => (
             <Cell key={i} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8, fontSize: 12 }} formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Cost']} />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: '#111111',
+            border: '1px solid #222222',
+            borderRadius: 12,
+            fontSize: 12,
+            color: '#FFFFFF',
+          }}
+          formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Cost']}
+        />
         <Legend wrapperStyle={{ fontSize: 12 }} />
       </PieChart>
     </ResponsiveContainer>

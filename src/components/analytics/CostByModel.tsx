@@ -12,11 +12,20 @@ export default function CostByModelChart({ data }: Props) {
   return (
     <ResponsiveContainer width="100%" height={250}>
       <BarChart data={chartData}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-        <XAxis dataKey="name" tick={{ fill: '#a0a0a0', fontSize: 11 }} />
-        <YAxis tick={{ fill: '#a0a0a0', fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
-        <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8, fontSize: 12 }} formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Cost']} />
-        <Bar dataKey="cost" fill="#5e6ad2" radius={[4, 4, 0, 0]} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#222222" />
+        <XAxis dataKey="name" tick={{ fill: '#A1A1A1', fontSize: 11 }} />
+        <YAxis tick={{ fill: '#A1A1A1', fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: '#111111',
+            border: '1px solid #222222',
+            borderRadius: 12,
+            fontSize: 12,
+            color: '#FFFFFF',
+          }}
+          formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Cost']}
+        />
+        <Bar dataKey="cost" fill="#6366F1" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )

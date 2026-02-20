@@ -38,17 +38,14 @@ export default function Sidebar() {
     { href: '/analytics', label: 'Analytics', icon: '📊' },
   ]
 
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     online: 'bg-[#10B981]',
     offline: 'bg-[#6B6B6B]',
     busy: 'bg-[#F59E0B]',
   }
 
   return (
-    <aside 
-      className="w-[200px] h-screen bg-[#111111] border-r border-[#222222] fixed left-0 top-0 flex flex-col"
-      style={{ zIndex: 50 }}
-    >
+    <aside className="w-[200px] h-screen bg-[#111111] border-r border-[#222222] fixed left-0 top-0 z-50 flex flex-col">
       {/* Header */}
       <div className="px-5 py-6 border-b border-[#222222]">
         <h1 className="text-lg font-semibold text-white tracking-tight">Mission Control</h1>
@@ -72,7 +69,7 @@ export default function Sidebar() {
                 }
               `}
             >
-              <span className="text-base">{link.icon}</span>
+              <span className="emoji text-base" role="img">{link.icon}</span>
               <span className="text-sm font-medium">{link.label}</span>
             </Link>
           )
@@ -101,10 +98,10 @@ export default function Sidebar() {
                     }
                   `}
                 >
-                  <span className="text-base">{agent.emoji}</span>
-                  <span className="text-sm font-medium flex-1">{agent.name}</span>
+                  <span className="emoji text-base" role="img">{agent.emoji || '🤖'}</span>
+                  <span className="text-sm font-medium flex-1 truncate">{agent.name}</span>
                   <div
-                    className={`w-1.5 h-1.5 rounded-full ${statusColors[agent.status]} ${
+                    className={`w-1.5 h-1.5 rounded-full ${statusColors[agent.status] || 'bg-[#6B6B6B]'} ${
                       isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                     } transition-opacity`}
                   />
@@ -121,7 +118,7 @@ export default function Sidebar() {
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#A1A1A1] hover:bg-[#1A1A1A] hover:text-white transition-all text-sm"
         >
-          <span className="text-base">🚪</span>
+          <span className="emoji text-base" role="img">🚪</span>
           <span className="font-medium">Logout</span>
         </button>
       </div>

@@ -16,19 +16,19 @@ export default function TaskCard({ task, onStatusChange, onClick }: TaskCardProp
   const router = useRouter()
   const [showBlockerModal, setShowBlockerModal] = useState(false)
 
-  const statusColors = {
-    'todo': 'bg-[#a0a0a0]/10 text-[#a0a0a0] border-[#a0a0a0]/20',
-    'in-progress': 'bg-[#5e6ad2]/10 text-[#5e6ad2] border-[#5e6ad2]/20',
-    'blocked': 'bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/20',
-    'review': 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/20',
-    'done': 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20',
+  const statusColors: Record<string, string> = {
+    'todo': 'bg-[#A1A1A1]/10 text-[#A1A1A1] border-[#A1A1A1]/20',
+    'in-progress': 'bg-[#6366F1]/10 text-[#6366F1] border-[#6366F1]/20',
+    'blocked': 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/20',
+    'review': 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20',
+    'done': 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/20',
   }
 
-  const priorityColors = {
-    'low': 'text-[#a0a0a0]',
-    'medium': 'text-[#5e6ad2]',
-    'high': 'text-[#f59e0b]',
-    'urgent': 'text-[#ef4444]',
+  const priorityColors: Record<string, string> = {
+    'low': 'text-[#A1A1A1]',
+    'medium': 'text-[#6366F1]',
+    'high': 'text-[#F59E0B]',
+    'urgent': 'text-[#EF4444]',
   }
 
   const handleUnblock = async (taskId: string) => {
@@ -44,11 +44,11 @@ export default function TaskCard({ task, onStatusChange, onClick }: TaskCardProp
   return (
     <>
       <div
-        className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-4 hover:border-[#5e6ad2]/50 transition-all cursor-pointer group"
+        className="bg-[#111111] border border-[#222222] rounded-xl p-4 hover:border-[#6366F1]/50 transition-all cursor-pointer group"
         onClick={() => router.push(`/tasks/${task.id}`)}
       >
         <div className="flex items-start justify-between mb-2">
-          <h3 className="text-sm font-medium text-[#e5e5e5] group-hover:text-[#5e6ad2] transition-colors flex-1">
+          <h3 className="text-sm font-medium text-white group-hover:text-[#6366F1] transition-colors flex-1">
             {task.title}
           </h3>
           <select
@@ -71,7 +71,7 @@ export default function TaskCard({ task, onStatusChange, onClick }: TaskCardProp
         </div>
 
         {task.description && (
-          <p className="text-xs text-[#a0a0a0] mb-3 line-clamp-2">
+          <p className="text-xs text-[#A1A1A1] mb-3 line-clamp-2">
             {task.description}
           </p>
         )}
@@ -79,7 +79,7 @@ export default function TaskCard({ task, onStatusChange, onClick }: TaskCardProp
         {/* Blocker badge */}
         {task.status === 'blocked' && task.blocked_by && (
           <button
-            className="mb-3 px-2 py-1 bg-[#ef4444]/10 border border-[#ef4444]/20 rounded text-xs text-[#ef4444] font-medium hover:bg-[#ef4444]/20 transition-all"
+            className="mb-3 px-2 py-1 bg-[#EF4444]/10 border border-[#EF4444]/20 rounded text-xs text-[#EF4444] font-medium hover:bg-[#EF4444]/20 transition-all"
             onClick={(e) => {
               e.stopPropagation()
               setShowBlockerModal(true)
@@ -90,7 +90,7 @@ export default function TaskCard({ task, onStatusChange, onClick }: TaskCardProp
         )}
 
         {task.status === 'blocked' && !task.blocked_by && task.blocker_reason && (
-          <div className="mb-3 p-2 bg-[#ef4444]/10 border border-[#ef4444]/20 rounded text-xs text-[#ef4444]">
+          <div className="mb-3 p-2 bg-[#EF4444]/10 border border-[#EF4444]/20 rounded text-xs text-[#EF4444]">
             🚫 {task.blocker_reason}
           </div>
         )}
@@ -100,16 +100,16 @@ export default function TaskCard({ task, onStatusChange, onClick }: TaskCardProp
             <span className={`font-medium ${priorityColors[task.priority]}`}>
               {task.priority.toUpperCase()}
             </span>
-            <span className="text-[#a0a0a0]">
+            <span className="text-[#A1A1A1]">
               {task.agent_id}
             </span>
             {task.assigned_to && (
-              <span className="text-[#a0a0a0]">
+              <span className="text-[#A1A1A1]">
                 → {task.assigned_to}
               </span>
             )}
           </div>
-          <span className="text-[#a0a0a0]">
+          <span className="text-[#6B6B6B]">
             {formatDateTime(task.created_at)}
           </span>
         </div>
