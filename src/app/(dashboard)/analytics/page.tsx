@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
 const TokensOverTimeChart = dynamic(() => import('@/components/analytics/TokensOverTime'), { ssr: false })
@@ -18,11 +19,21 @@ interface Overview {
 }
 
 interface TopProject {
-  project_id: string; name: string; total_tokens: number; total_cost: number; tasks_count: number
+  project_id: string
+  name: string
+  total_tokens: number
+  total_cost: number
+  tasks_count: number
 }
 
 interface TopTask {
-  task_id: string; title: string; project_name: string; project_id: string; agent_id: string; total_tokens: number; total_cost: number
+  task_id: string
+  title: string
+  project_name: string
+  project_id: string
+  agent_id: string
+  total_tokens: number
+  total_cost: number
 }
 
 export default function AnalyticsPage() {
@@ -54,106 +65,193 @@ export default function AnalyticsPage() {
   }, [])
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen"><div className="text-[#a0a0a0]">Loading analytics...</div></div>
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div style={{ color: '#6B6B6B' }}>Loading analytics...</div>
+      </div>
+    )
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-semibold text-[#e5e5e5] mb-2">📊 Analytics</h1>
-        <p className="text-sm text-[#a0a0a0] mb-8">Token usage and cost tracking across all projects</p>
+    <div className="w-full min-h-screen" style={{ backgroundColor: '#0A0A0A' }}>
+      {/* Sticky Header */}
+      <div 
+        className="sticky top-0 z-40 border-b"
+        style={{ 
+          backgroundColor: 'rgba(10, 10, 10, 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderColor: '#222222'
+        }}
+      >
+        <div className="px-8 py-6">
+          <div className="max-w-[1400px]">
+            <h1 className="text-2xl font-semibold text-white mb-1">📊 Analytics</h1>
+            <p style={{ fontSize: '13px', color: '#A1A1A1' }}>
+              Token usage and cost tracking across all projects
+            </p>
+          </div>
+        </div>
+      </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total Tokens', value: (overview?.total_tokens || 0).toLocaleString(), sub: `${overview?.record_count || 0} records` },
-            { label: 'Total Cost', value: `$${(overview?.total_cost || 0).toFixed(2)}`, sub: 'All time' },
-            { label: 'This Month', value: (overview?.this_month_tokens || 0).toLocaleString(), sub: `$${(overview?.this_month_cost || 0).toFixed(2)}` },
-            { label: 'Avg per Task', value: (overview?.avg_tokens_per_task || 0).toLocaleString(), sub: 'tokens' },
-          ].map((card) => (
-            <div key={card.label} className="p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-              <span className="text-xs text-[#a0a0a0] block mb-1">{card.label}</span>
-              <span className="text-2xl font-semibold text-[#e5e5e5]">{card.value}</span>
-              <span className="text-xs text-[#666] block mt-1">{card.sub}</span>
+      {/* Content */}
+      <div className="p-8">
+        <div className="max-w-[1400px] space-y-8">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { 
+                label: 'Total Tokens', 
+                value: (overview?.total_tokens || 0).toLocaleString(), 
+                sub: `${overview?.record_count || 0} records`,
+                color: '#6366F1'
+              },
+              { 
+                label: 'Total Cost', 
+                value: `$${(overview?.total_cost || 0).toFixed(2)}`, 
+                sub: 'All time',
+                color: '#10B981'
+              },
+              { 
+                label: 'This Month', 
+                value: (overview?.this_month_tokens || 0).toLocaleString(), 
+                sub: `$${(overview?.this_month_cost || 0).toFixed(2)}`,
+                color: '#F59E0B'
+              },
+              { 
+                label: 'Avg per Task', 
+                value: (overview?.avg_tokens_per_task || 0).toLocaleString(), 
+                sub: 'tokens',
+                color: '#3B82F6'
+              },
+            ].map((card) => (
+              <div 
+                key={card.label} 
+                className="p-6 rounded-2xl"
+                style={{ backgroundColor: '#111111', border: '1px solid #222222' }}
+              >
+                <div style={{ fontSize: '12px', color: '#6B6B6B', marginBottom: '12px', fontWeight: 500 }}>
+                  {card.label}
+                </div>
+                <div className="text-3xl font-semibold text-white mb-2">
+                  {card.value}
+                </div>
+                <div style={{ fontSize: '12px', color: '#A1A1A1' }}>
+                  {card.sub}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Charts */}
+          {byDay.length > 0 && (
+            <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+              <h3 className="text-lg font-semibold text-white mb-6">Tokens Over Time</h3>
+              <TokensOverTimeChart data={byDay} />
             </div>
-          ))}
-        </div>
-
-        {/* Charts */}
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="col-span-2 p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-            <h3 className="text-sm font-semibold text-[#e5e5e5] mb-4">Tokens Over Time (Last 30 Days)</h3>
-            {byDay.length > 0 ? <TokensOverTimeChart data={byDay} /> : <p className="text-sm text-[#666] py-8 text-center">No data yet</p>}
-          </div>
-
-          <div className="p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-            <h3 className="text-sm font-semibold text-[#e5e5e5] mb-4">Cost by Agent</h3>
-            {byAgent.length > 0 ? <CostByAgentChart data={byAgent} /> : <p className="text-sm text-[#666] py-8 text-center">No data yet</p>}
-          </div>
-
-          <div className="p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-            <h3 className="text-sm font-semibold text-[#e5e5e5] mb-4">Cost by LLM</h3>
-            {byModel.length > 0 ? <CostByModelChart data={byModel} /> : <p className="text-sm text-[#666] py-8 text-center">No data yet</p>}
-          </div>
-        </div>
-
-        {/* Top Projects Table */}
-        <div className="mb-8 p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-          <h3 className="text-sm font-semibold text-[#e5e5e5] mb-4">Top Projects by Cost</h3>
-          {topProjects.length === 0 ? (
-            <p className="text-sm text-[#666] py-4 text-center">No data yet</p>
-          ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="text-xs text-[#a0a0a0] border-b border-[#2a2a2a]">
-                  <th className="text-left py-2">Project</th>
-                  <th className="text-right py-2">Total Tokens</th>
-                  <th className="text-right py-2">Cost</th>
-                  <th className="text-right py-2">Tasks</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topProjects.map((p) => (
-                  <tr key={p.project_id} className="border-b border-[#2a2a2a]/50 hover:bg-[#2a2a2a]/30 cursor-pointer" onClick={() => router.push(`/projects/${p.project_id}`)}>
-                    <td className="py-2 text-sm text-[#e5e5e5]">{p.name}</td>
-                    <td className="py-2 text-sm text-[#a0a0a0] text-right">{p.total_tokens.toLocaleString()}</td>
-                    <td className="py-2 text-sm text-[#22c55e] text-right">${p.total_cost.toFixed(2)}</td>
-                    <td className="py-2 text-sm text-[#a0a0a0] text-right">{p.tasks_count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           )}
-        </div>
 
-        {/* Top Tasks Table */}
-        <div className="p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg">
-          <h3 className="text-sm font-semibold text-[#e5e5e5] mb-4">Top Tasks by Cost</h3>
-          {topTasks.length === 0 ? (
-            <p className="text-sm text-[#666] py-4 text-center">No data yet</p>
-          ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="text-xs text-[#a0a0a0] border-b border-[#2a2a2a]">
-                  <th className="text-left py-2">Task</th>
-                  <th className="text-left py-2">Project</th>
-                  <th className="text-left py-2">Agent</th>
-                  <th className="text-right py-2">Tokens</th>
-                  <th className="text-right py-2">Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topTasks.map((t) => (
-                  <tr key={t.task_id} className="border-b border-[#2a2a2a]/50 hover:bg-[#2a2a2a]/30 cursor-pointer" onClick={() => router.push(`/tasks/${t.task_id}`)}>
-                    <td className="py-2 text-sm text-[#e5e5e5]">{t.title}</td>
-                    <td className="py-2 text-sm text-[#a0a0a0]">{t.project_name}</td>
-                    <td className="py-2 text-sm text-[#a0a0a0]">{t.agent_id}</td>
-                    <td className="py-2 text-sm text-[#a0a0a0] text-right">{t.total_tokens.toLocaleString()}</td>
-                    <td className="py-2 text-sm text-[#22c55e] text-right">${t.total_cost.toFixed(2)}</td>
-                  </tr>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {byAgent.length > 0 && (
+              <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+                <h3 className="text-lg font-semibold text-white mb-6">Cost by Agent</h3>
+                <CostByAgentChart data={byAgent} />
+              </div>
+            )}
+
+            {byModel.length > 0 && (
+              <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+                <h3 className="text-lg font-semibold text-white mb-6">Cost by LLM Model</h3>
+                <CostByModelChart data={byModel} />
+              </div>
+            )}
+          </div>
+
+          {/* Top Projects */}
+          {topProjects.length > 0 && (
+            <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+              <h3 className="text-lg font-semibold text-white mb-6">Top Projects by Cost</h3>
+              <div className="space-y-3">
+                {topProjects.slice(0, 5).map((proj) => (
+                  <Link key={proj.project_id} href={`/projects/${proj.project_id}`}>
+                    <div 
+                      className="flex items-center justify-between p-4 rounded-xl transition-all cursor-pointer"
+                      style={{ backgroundColor: '#0A0A0A', border: '1px solid transparent' }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#6366F1'
+                        e.currentTarget.style.backgroundColor = '#111111'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'transparent'
+                        e.currentTarget.style.backgroundColor = '#0A0A0A'
+                      }}
+                    >
+                      <div className="flex-1">
+                        <div className="font-medium text-white mb-1">{proj.name}</div>
+                        <div style={{ fontSize: '12px', color: '#6B6B6B' }}>
+                          {proj.total_tokens.toLocaleString()} tokens • {proj.tasks_count} tasks
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold" style={{ color: '#10B981' }}>
+                          ${proj.total_cost.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
+          )}
+
+          {/* Top Tasks */}
+          {topTasks.length > 0 && (
+            <div className="rounded-2xl p-6" style={{ backgroundColor: '#111111', border: '1px solid #222222' }}>
+              <h3 className="text-lg font-semibold text-white mb-6">Top Tasks by Token Usage</h3>
+              <div className="space-y-3">
+                {topTasks.slice(0, 5).map((task) => (
+                  <Link key={task.task_id} href={`/tasks/${task.task_id}`}>
+                    <div 
+                      className="flex items-center justify-between p-4 rounded-xl transition-all cursor-pointer"
+                      style={{ backgroundColor: '#0A0A0A', border: '1px solid transparent' }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#6366F1'
+                        e.currentTarget.style.backgroundColor = '#111111'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'transparent'
+                        e.currentTarget.style.backgroundColor = '#0A0A0A'
+                      }}
+                    >
+                      <div className="flex-1">
+                        <div className="font-medium text-white mb-1">{task.title}</div>
+                        <div style={{ fontSize: '12px', color: '#6B6B6B' }}>
+                          {task.project_name} • {task.agent_id}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold text-white">
+                          {task.total_tokens.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#10B981' }}>
+                          ${task.total_cost.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {byDay.length === 0 && topProjects.length === 0 && topTasks.length === 0 && (
+            <div className="text-center py-16">
+              <div style={{ fontSize: '64px', marginBottom: '16px' }}>📊</div>
+              <h2 className="text-xl font-semibold text-white mb-2">No data yet</h2>
+              <p style={{ color: '#A1A1A1' }}>
+                Token usage will appear here once tasks start running
+              </p>
+            </div>
           )}
         </div>
       </div>
